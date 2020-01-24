@@ -1,21 +1,22 @@
-
 require('date')
 require('pry')
 
 require_relative('models/film.rb')
 require_relative('models/customer.rb')
 require_relative('models/ticket.rb')
+require_relative('models/screening.rb')
+require_relative('models/room.rb')
 
-
-
-Ticket.delete_all()
 Film.delete_all()
+Room.delete_all()
 Customer.delete_all()
+Ticket.delete_all()
+Screening.delete_all()
 
+# ----------------- FILMS ----------------------------
 
   la_la_land = Film.new({
     'title' => 'La La Land',
-    'screening_time' => '2020-02-15 16:10:00',
     'price' => 10
   })
   la_la_land.save()
@@ -23,19 +24,18 @@ Customer.delete_all()
 
   gangster_squad = Film.new({
     'title' => 'Gangster Squad',
-    'screening_time' => '2020-02-15 17:43:00',
     'price' => 10
   })
-
   gangster_squad.save()
 
   crazy_stupid_love = Film.new({
     'title' => 'Crazy Stupid Love',
-    'screening_time' => '2020-02-15 15:34:00',
     'price' => 10
   })
-
   crazy_stupid_love.save()
+
+
+# ----------------- CUSTOMERS ----------------------------
 
   john_smith = Customer.new({
     'first_name' => 'John',
@@ -72,59 +72,133 @@ Customer.delete_all()
   })
   alice_wong.save()
 
+# ----------------- ROOMS ----------------------------
+
+  room1 = Room.new({
+    'room_number' => 1,
+    'seats' => 10
+  })
+  room1.save()
+
+  room2 = Room.new({
+    'room_number' => 2,
+    'seats' => 20
+  })
+  room2.save()
+
+  room3 = Room.new({
+    'room_number' => 3,
+    'seats' => 15
+  })
+  room3.save()
+
+  # ----------------- SCREENINGS ----------------------------
+
+    screening1 = Screening.new({
+      'film_id' => la_la_land.id,
+      'screening_date' => "2020-01-01",
+      'screening_time' => "18:10",
+      'room_id'=> room1.id
+    })
+    screening1.save()
+
+    screening2 = Screening.new({
+      'film_id' => la_la_land.id,
+      'screening_date' => "2020-01-01",
+      'screening_time' => "19:40",
+      'room_id'=> room1.id
+    })
+    screening2.save()
+
+    screening3 = Screening.new({
+      'film_id' => gangster_squad.id,
+      'screening_date' => "2020-01-02",
+      'screening_time' => "18:40",
+      'room_id'=> room2.id
+    })
+    screening3.save()
+
+    screening4 = Screening.new({
+      'film_id' => gangster_squad.id,
+      'screening_date' => "2020-01-03",
+      'screening_time' => "19:40",
+      'room_id'=> room2.id
+    })
+    screening4.save()
+
+    screening5 = Screening.new({
+      'film_id' => crazy_stupid_love.id,
+      'screening_date' => "2020-01-01",
+      'screening_time' => "16:30",
+      'room_id'=> room1.id
+    })
+    screening5.save()
+
+    screening6 = Screening.new({
+      'film_id' => crazy_stupid_love.id,
+      'screening_date' => "2020-01-02",
+      'screening_time' => "15:40",
+      'room_id'=> room2.id
+    })
+    screening6.save()
+
+
+# ----------------- TICKETS ----------------------------
+
   ticket1 = Ticket.new({
     'customer_id' => alice_wong.id,
-    'film_id' => la_la_land.id
+    'screening_id' => screening1.id
   })
   ticket1.save()
 
   ticket2 = Ticket.new({
     'customer_id' => john_smith.id,
-    'film_id' => la_la_land.id
+    'screening_id' => screening1.id
   })
   ticket2.save()
 
   ticket3 = Ticket.new({
     'customer_id' => maria_stevenson.id,
-    'film_id' => la_la_land.id
+    'screening_id' => screening1.id
   })
   ticket3.save()
 
   ticket4 = Ticket.new({
     'customer_id' => lee_green.id,
-    'film_id' => la_la_land.id
+    'screening_id' => screening1.id
   })
   ticket4.save()
 
   ticket5 = Ticket.new({
     'customer_id' => ross_khan.id,
-    'film_id' => gangster_squad.id
+    'screening_id' => screening2.id
   })
   ticket5.save()
 
   ticket6 = Ticket.new({
     'customer_id' => lee_green.id,
-    'film_id' => gangster_squad.id
+    'screening_id' => screening2.id
   })
   ticket6.save()
 
   ticket7 = Ticket.new({
     'customer_id' => maria_stevenson.id,
-    'film_id' => gangster_squad.id
+    'screening_id' => screening3.id
   })
   ticket7.save()
 
   ticket8 = Ticket.new({
     'customer_id' => ross_khan.id,
-    'film_id' => crazy_stupid_love.id
+    'screening_id' => screening3.id
   })
   ticket8.save()
 
   ticket9 = Ticket.new({
     'customer_id' => john_smith.id,
-    'film_id' => crazy_stupid_love.id
+    'screening_id' => screening3.id
   })
   ticket9.save()
+
 
 
 

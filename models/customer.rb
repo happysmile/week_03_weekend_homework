@@ -39,11 +39,49 @@ class Customer
     SqlRunner.run(sql, values)
   end
 
-  def films()
-    sql = "SELECT films.* FROM films INNER JOIN tickets on tickets.film_id = films.id WHERE tickets.customer_id = $1"
+  def screenings()
+    sql = "SELECT screenings.* FROM screenings INNER JOIN tickets ON tickets.screening_id = screenings.id WHERE tickets.customer_id = $1"
     values = [@id]
     result = SqlRunner.run(sql, values)
-    return result.map{|film| Film.new(film)} if result.any?
+    return result.map{|screening| Screening.new(screening)} if result.any?
+  end
+
+  def tickets()
+    sql = "SELECT tickets.* FROM tickets WHERE tickets.customer_id = $1"
+    values = [@id]
+    result = SqlRunner.run(sql, values)
+    return result.map{|ticket| Ticket.new(ticket)} if result.any?
+  end
+
+  def how_many_tickets()
+    tickets = tickets()
+    return tickets.count()
+  end
+
+  def decrease_funds(amount)
+    @funds -= amount
+    update()
+  end
+
+  def can_afford(amount)
+    if @funds.to_i() >= amount
+      return true
+    else
+      return false
+    end
+  end
+
+  def buy_ticket(screening)
+    room = Room.find_by_id(screening.room_id)
+    film = Film.find_by_id(screening.film_id)
+    if( room.is_there_a_seat_left() )
+      if( can_afford(film.price) )
+        ticket = Ticket.new(@id, screening.id)
+        ticket.save()
+        decrease_funds(film)
+        room.decrease_seats()
+      end
+    end
   end
 
 

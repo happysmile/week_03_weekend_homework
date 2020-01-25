@@ -1,6 +1,5 @@
 require('date')
 require('pry')
-require('pp')
 
 require_relative('models/film.rb')
 require_relative('models/customer.rb')
@@ -103,7 +102,7 @@ Screening.delete_all()
     screening1 = Screening.new({
       'film_id' => la_la_land.id,
       'screening_date' => "2020-01-01",
-      'screening_time' => "18:10",
+      'screening_time' => "19:40",
       'room_id'=> room1.id
     })
     screening1.save()
@@ -111,15 +110,15 @@ Screening.delete_all()
     screening2 = Screening.new({
       'film_id' => la_la_land.id,
       'screening_date' => "2020-01-01",
-      'screening_time' => "19:40",
+      'screening_time' => "18:10",
       'room_id'=> room1.id
     })
-    screening2.save()
+    screening2.save()    
 
     screening3 = Screening.new({
-      'film_id' => gangster_squad.id,
+      'film_id' => crazy_stupid_love.id,
       'screening_date' => "2020-01-02",
-      'screening_time' => "18:40",
+      'screening_time' => "15:40",
       'room_id'=> room2.id
     })
     screening3.save()
@@ -141,9 +140,9 @@ Screening.delete_all()
     screening5.save()
 
     screening6 = Screening.new({
-      'film_id' => crazy_stupid_love.id,
+      'film_id' => gangster_squad.id,
       'screening_date' => "2020-01-02",
-      'screening_time' => "15:40",
+      'screening_time' => "18:40",
       'room_id'=> room2.id
     })
     screening6.save()

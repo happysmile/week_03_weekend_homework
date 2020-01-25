@@ -48,10 +48,12 @@ class Screening
   def self.screenings_table()
     puts "~~~~~~~~~~~~~~~ Cinema Screenings ~~~~~~~~~~~~~~~"
     all_films_showing = self.all_films_showing()
-    all_screenings_for_all_films = all_films_showing.map {|film| { film.title =>  self.find_screenings_per_film(film) } }
+    all_screenings_for_all_films = all_films_showing.map { |film|
+      { film.title =>  self.find_screenings_per_film(film) }
+    }
     for screenings_per_film in all_screenings_for_all_films
         film_key = screenings_per_film.keys[0]
-        puts film_key
+        puts "*** #{film_key} ***"
         screenings_array = screenings_per_film[film_key]
         for screening in screenings_array
           room_n = Room.find_by_id(screening.room_id).room_number

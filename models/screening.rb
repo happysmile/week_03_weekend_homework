@@ -32,9 +32,38 @@ class Screening
     return Screening.new(screenings_hash)
   end
 
+  def self.all_films_showing()
+    sql = "SELECT DISTINCT films.* FROM films INNER JOIN screenings ON films.id = screenings.film_id ORDER BY films.title"
+    results = SqlRunner.run(sql)
+    return results.map {|film| Film.new(film)} if results.any?
+  end
+
+  def self.find_screenings_per_film(film)
+    sql = "SELECT * FROM screenings WHERE film_id = $1 ORDER BY screening_date, screening_time"
+    values = [film.id]
+    results = SqlRunner.run(sql, values)
+    return results.map {|screening| Screening.new(screening)} if results.any?
+  end
+
+  def self.screenings_table()
+    puts "~~~~~~~~~~~~~~~ Cinema Screenings ~~~~~~~~~~~~~~~"
+    all_films_showing = self.all_films_showing()
+    all_screenings_for_all_films = all_films_showing.map {|film| { film.title =>  self.find_screenings_per_film(film) } }
+    for screenings_per_film in all_screenings_for_all_films
+        film_key = screenings_per_film.keys[0]
+        puts film_key
+        screenings_array = screenings_per_film[film_key]
+        for screening in screenings_array
+          room_n = Room.find_by_id(screening.room_id).room_number
+          puts "#{screening.screening_date} #{screening.screening_time} - ROOM #{room_n}"
+        end
+    end
+    puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+  end
+
   def self.most_popular()
     all_screenings = self.all()
-    return all_screenings.max_by { |screening| screening.how_many_customers() }  
+    return all_screenings.max_by { |screening| screening.how_many_customers() }
   end
 
   def save()
@@ -60,7 +89,7 @@ class Screening
   end
 
   def customers()
-    sql = "SELECT customers.* FROM customers INNER JOIN tickets on tickets.customer_id = customers.id WHERE tickets.screening_id = $1"
+    sql = "SELECT customers.* FROM customers INNER JOIN tickets ON tickets.customer_id = customers.id WHERE tickets.screening_id = $1"
     values = [@id]
     result = SqlRunner.run(sql, values)
     return result.map{|customer| Customer.new(customer)} if result.any?

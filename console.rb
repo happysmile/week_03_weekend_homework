@@ -1,5 +1,6 @@
 require('date')
 require('pry')
+require('pp')
 
 require_relative('models/film.rb')
 require_relative('models/customer.rb')
@@ -34,6 +35,11 @@ Screening.delete_all()
   })
   crazy_stupid_love.save()
 
+  film_not_showing = Film.new({
+    'title' => 'Film Not Showing',
+    'price' => 10
+  })
+  film_not_showing.save()
 
 # ----------------- CUSTOMERS ----------------------------
 
@@ -141,6 +147,22 @@ Screening.delete_all()
       'room_id'=> room2.id
     })
     screening6.save()
+
+    screening7 = Screening.new({
+      'film_id' => crazy_stupid_love.id,
+      'screening_date' => "2020-01-02",
+      'screening_time' => "17:40",
+      'room_id'=> room2.id
+    })
+    screening7.save()
+
+    screening8 = Screening.new({
+      'film_id' => crazy_stupid_love.id,
+      'screening_date' => "2020-01-02",
+      'screening_time' => "16:40",
+      'room_id'=> room2.id
+    })
+    screening8.save()
 
 
 # ----------------- TICKETS ----------------------------

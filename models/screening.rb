@@ -38,19 +38,10 @@ class Screening
     return results.map {|film| Film.new(film)} if results.any?
   end
 
-  def self.find_screenings_per_film(film)
-    sql = "SELECT * FROM screenings WHERE film_id = $1 ORDER BY screening_date, screening_time"
-    values = [film.id]
-    results = SqlRunner.run(sql, values)
-    return results.map {|screening| Screening.new(screening)} if results.any?
-  end
-
   def self.screenings_table()
     puts "~~~~~~~~~~~~~~~ Cinema Screenings ~~~~~~~~~~~~~~~"
     all_films_showing = self.all_films_showing()
-    all_screenings_for_all_films = all_films_showing.map { |film|
-      { film.title =>  self.find_screenings_per_film(film) }
-    }
+    all_screenings_for_all_films = all_films_showing.map { |film| { film.title => film.screenings() } }
     for screenings_per_film in all_screenings_for_all_films
         film_key = screenings_per_film.keys[0]
         puts "*** #{film_key} ***"
@@ -99,7 +90,11 @@ class Screening
 
   def how_many_customers()
     customers = customers()
-    return customers.count()
+    if customers != nil
+      return customers.count()
+    else
+      return 0
+    end
   end
 
 end

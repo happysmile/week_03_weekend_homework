@@ -61,7 +61,7 @@ class Film
   end
 
   def screenings()
-    sql = "SELECT screenings.* FROM screenings WHERE screenings.film_id = $1"
+    sql = "SELECT screenings.* FROM screenings WHERE screenings.film_id = $1 ORDER BY screening_date, screening_time"
     values = [@id]
     result = SqlRunner.run(sql, values)
     return result.map{|screening| Screening.new(screening)} if result.any?

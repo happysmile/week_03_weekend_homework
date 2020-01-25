@@ -12,15 +12,6 @@ class Customer
     @funds = options["funds"].to_i
   end
 
-  def save()
-    sql = "INSERT INTO customers (first_name, last_name, funds)
-    VALUES ($1, $2, $3)
-    RETURNING id"
-    values = [@first_name, @last_name, @funds]
-    customer_data = SqlRunner.run(sql, values)
-    @id = customer_data[0]["id"].to_i
-  end
-
   def self.delete_all()
     sql = "DELETE FROM customers"
     SqlRunner.run(sql)
@@ -30,6 +21,29 @@ class Customer
     sql = "SELECT * from customers"
     customer_data = SqlRunner.run(sql)
     return customer_data.map{|customer| Customer.new(customer)}
+  end
+
+  def self.find_by_id(id)
+    sql = "SELECT * FROM customers WHERE id = $1"
+    values = [id]
+    results = SqlRunner.run(sql, values)
+    customers_hash = results.first
+    return Customer.new(customers_hash)
+  end
+
+  def save()
+    sql = "INSERT INTO customers (first_name, last_name, funds)
+    VALUES ($1, $2, $3)
+    RETURNING id"
+    values = [@first_name, @last_name, @funds]
+    customer_data = SqlRunner.run(sql, values)
+    @id = customer_data[0]["id"].to_i
+  end
+
+  def delete()
+    sql = "DELETE FROM customers where id = $1"
+    values = [@id]
+    SqlRunner.run(sql, values)
   end
 
   def update()
@@ -76,13 +90,15 @@ class Customer
     film = Film.find_by_id(screening.film_id)
     if( room.is_there_a_seat_left() )
       if( can_afford(film.price) )
-        ticket = Ticket.new(@id, screening.id)
+        ticket = Ticket.new({
+          'customer_id' => @id,
+          'screening_id' => screening.id
+        })
         ticket.save()
-        decrease_funds(film)
+        decrease_funds(film.price)
         room.decrease_seats()
       end
     end
   end
-
 
 end

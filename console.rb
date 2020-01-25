@@ -199,6 +199,23 @@ Screening.delete_all()
   })
   ticket9.save()
 
+  ticket10 = Ticket.new({
+    'customer_id' => ross_khan.id,
+    'screening_id' => screening4.id
+  })
+  ticket10.save()
+
+  ticket11 = Ticket.new({
+    'customer_id' => lee_green.id,
+    'screening_id' => screening5.id
+  })
+  ticket11.save()
+
+  ticket12 = Ticket.new({
+    'customer_id' => maria_stevenson.id,
+    'screening_id' => screening6.id
+  })
+  ticket12.save()
 
 
 

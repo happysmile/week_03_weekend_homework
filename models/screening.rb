@@ -13,6 +13,30 @@ class Screening
     @room_id = options["room_id"]
   end
 
+  def self.all()
+    sql = "SELECT * from screenings"
+    screening_data = SqlRunner.run(sql)
+    return screening_data.map{|screening| Screening.new(screening)}
+  end
+
+  def self.delete_all()
+    sql = "DELETE FROM screenings"
+    SqlRunner.run(sql)
+  end
+
+  def self.find_by_id(id)
+    sql = "SELECT * FROM screenings WHERE id = $1"
+    values = [id]
+    results = SqlRunner.run(sql, values)
+    screenings_hash = results.first
+    return Screening.new(screenings_hash)
+  end
+
+  def self.most_popular()
+    all_screenings = self.all()
+    return all_screenings.max_by { |screening| screening.how_many_customers() }  
+  end
+
   def save()
     sql = "INSERT INTO screenings (film_id, screening_date, screening_time, room_id)
     VALUES ($1, $2, $3, $4)
@@ -22,15 +46,10 @@ class Screening
     @id = screening_data[0]["id"].to_i
   end
 
-  def self.delete_all()
-    sql = "DELETE FROM screenings"
-    SqlRunner.run(sql)
-  end
-
-  def self.all()
-    sql = "SELECT * from screenings"
-    screening_data = SqlRunner.run(sql)
-    return screening_data.map{|screening| Screening.new(screening)}
+  def delete()
+    sql = "DELETE FROM screenings where id = $1"
+    values = [@id]
+    SqlRunner.run(sql, values)
   end
 
   def update()
@@ -51,6 +70,5 @@ class Screening
     customers = customers()
     return customers.count()
   end
-
 
 end

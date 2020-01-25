@@ -11,15 +11,6 @@ class Ticket
     @screening_id = options["screening_id"]
   end
 
-  def save()
-    sql = "INSERT INTO tickets (customer_id, screening_id)
-    VALUES ($1, $2)
-    RETURNING id"
-    values = [@customer_id, @screening_id]
-    ticket_data = SqlRunner.run(sql, values)
-    @id = ticket_data[0]["id"].to_i
-  end
-
   def self.delete_all()
     sql = "DELETE FROM tickets"
     SqlRunner.run(sql)
@@ -29,6 +20,29 @@ class Ticket
     sql = "SELECT * from tickets"
     ticket_data = SqlRunner.run(sql)
     return ticket_data.map{|ticket| Ticket.new(ticket)}
+  end
+
+  def self.find_by_id(id)
+    sql = "SELECT * FROM tickets WHERE id = $1"
+    values = [id]
+    results = SqlRunner.run(sql, values)
+    tickets_hash = results.first
+    return Ticket.new(tickets_hash)
+  end
+
+  def save()
+    sql = "INSERT INTO tickets (customer_id, screening_id)
+    VALUES ($1, $2)
+    RETURNING id"
+    values = [@customer_id, @screening_id]
+    ticket_data = SqlRunner.run(sql, values)
+    @id = ticket_data[0]["id"].to_i
+  end
+
+  def delete()
+    sql = "DELETE FROM tickets where id = $1"
+    values = [@id]
+    SqlRunner.run(sql, values)
   end
 
   def update()

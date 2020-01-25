@@ -11,15 +11,6 @@ class Film
     @price = options["price"].to_i
   end
 
-  def save()
-    sql = "INSERT INTO films (title, price)
-    VALUES ($1, $2)
-    RETURNING id"
-    values = [@title, @price]
-    film_data = SqlRunner.run(sql, values)
-    @id = film_data[0]["id"].to_i
-  end
-
   def self.delete_all()
     sql = "DELETE FROM films"
     SqlRunner.run(sql)
@@ -31,26 +22,34 @@ class Film
     return film_data.map{|film| Film.new(film)}
   end
 
+  def self.find_by_id(id)
+    sql = "SELECT * FROM films WHERE id = $1"
+    values = [id]
+    results = SqlRunner.run(sql, values)
+    films_hash = results.first
+    return Film.new(films_hash)
+  end
+
+  def save()
+    sql = "INSERT INTO films (title, price)
+    VALUES ($1, $2)
+    RETURNING id"
+    values = [@title, @price]
+    film_data = SqlRunner.run(sql, values)
+    @id = film_data[0]["id"].to_i
+  end
+
+  def delete()
+    sql = "DELETE FROM films where id = $1"
+    values = [@id]
+    SqlRunner.run(sql, values)
+  end
+
   def update()
     sql = "UPDATE films SET (title, price) = ($1, $2)
     WHERE id = $3"
     values = [@title, @price, @id]
     SqlRunner.run(sql, values)
   end
-
-  def self.find_by_id(id)
-    sql = "SELECT * FROM films WHERE id = $1"
-    values = [id]
-    results = SqlRunner.run(sql, values)
-    films_hash = results.first
-    film = Film.new(films_hash)
-    return film
-  end
-
-  def how_many_customers()
-    customers = customers()
-    return customers.count()
-  end
-
 
 end

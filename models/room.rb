@@ -7,16 +7,7 @@ class Room
   def initialize(options)
     @id = options["id"].to_i if options["id"]
     @room_number = options["room_number"]
-    @seats = options["seats"]
-  end
-
-  def save()
-    sql = "INSERT INTO rooms (room_number, seats)
-    VALUES ($1, $2)
-    RETURNING id"
-    values = [@room_number, @seats]
-    room_data = SqlRunner.run(sql, values)
-    @id = room_data[0]["id"].to_i
+    @seats = options["seats"].to_i
   end
 
   def self.delete_all()
@@ -35,8 +26,22 @@ class Room
     values = [id]
     results = SqlRunner.run(sql, values)
     rooms_hash = results.first
-    room = Room.new(rooms_hash)
-    return room
+    return Room.new(rooms_hash)
+  end
+
+  def save()
+    sql = "INSERT INTO rooms (room_number, seats)
+    VALUES ($1, $2)
+    RETURNING id"
+    values = [@room_number, @seats]
+    room_data = SqlRunner.run(sql, values)
+    @id = room_data[0]["id"].to_i
+  end
+
+  def delete()
+    sql = "DELETE FROM rooms where id = $1"
+    values = [@id]
+    SqlRunner.run(sql, values)
   end
 
   def update()
@@ -58,6 +63,5 @@ class Room
       return false
     end
   end
-
 
 end

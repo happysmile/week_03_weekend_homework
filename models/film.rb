@@ -52,4 +52,26 @@ class Film
     SqlRunner.run(sql, values)
   end
 
+  def customers()
+    sql = "SELECT DISTINCT customers.* FROM customers INNER JOIN tickets ON tickets.customer_id = customers.id INNER JOIN screenings ON screenings.id = tickets.screening_id
+    WHERE screenings.film_id = $1"
+    values = [@id]
+    result = SqlRunner.run(sql, values)
+    return result.map{|customer| Customer.new(customer)} if result.any?
+  end
+
+  def screenings()
+    sql = "SELECT screenings.* FROM screenings WHERE screenings.film_id = $1"
+    values = [@id]
+    result = SqlRunner.run(sql, values)
+    return result.map{|screening| Screening.new(screening)} if result.any?
+  end
+
+  def tickets()
+    sql = "SELECT tickets.* FROM tickets INNER JOIN screenings ON tickets.screening_id = screenings.id WHERE screenings.film_id = $1"
+    values = [@id]
+    result = SqlRunner.run(sql, values)
+    return result.map{|ticket| Ticket.new(ticket)} if result.any?
+  end
+
 end

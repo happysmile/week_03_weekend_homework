@@ -60,6 +60,14 @@ class Customer
     return result.map{|screening| Screening.new(screening)} if result.any?
   end
 
+  def films()
+    sql = "SELECT DISTINCT films.* FROM films INNER JOIN screenings ON films.id = screenings.film_id INNER JOIN tickets ON tickets.screening_id = screenings.id
+    WHERE tickets.customer_id = $1"
+    values = [@id]
+    result = SqlRunner.run(sql, values)
+    return result.map{|film| Film.new(film)} if result.any?
+  end
+
   def tickets()
     sql = "SELECT tickets.* FROM tickets WHERE tickets.customer_id = $1"
     values = [@id]
